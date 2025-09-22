@@ -192,7 +192,7 @@ class Camera {
             const fov_radian =  this.fov_y * Math.PI / 180
             // const distance_to_image_plane = gl.canvas.height/(Math.tan(fov_radian / 2)) // aka focal length?
             // console.log(distance_to_image_plane)
-            const distance_to_image_plane = 50 // Not sure how to set this??
+            const distance_to_image_plane = 100 // Not sure how to set this??
             const ortho_top = distance_to_image_plane * Math.tan(fov_radian / 2)
             const ortho_bottom = -1*ortho_top
             const ortho_right = ortho_top * aspect
@@ -222,8 +222,7 @@ class Camera {
         const dot = this.lastViewProjMatrix[2]  * this.vpm[2] 
                   + this.lastViewProjMatrix[6]  * this.vpm[6]
                   + this.lastViewProjMatrix[10] * this.vpm[10]
-        if (Math.abs(dot - 1) > 0.01 && (dot > 0.01)) {
-            console.log(dot)
+        if (Math.abs(dot - 1) > 0.01 && dot > 0.01) {
             this.needsWorkerUpdate = true
             mat4.copy(this.lastViewProjMatrix, this.vpm)
         }

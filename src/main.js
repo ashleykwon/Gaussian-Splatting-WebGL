@@ -14,7 +14,7 @@ let gizmoRenderer = new GizmoRenderer()
 let positionBuffer, positionData, opacityData
 
 const settings = {
-    scene: 'room',
+    scene: 'building',
     renderResolution: 0.2,
     maxGaussians: 1e6,
     scalingModifier: 1,
@@ -35,6 +35,13 @@ const settings = {
 }
 
 const defaultCameraParameters = {
+    'building': {
+        up: [0, 0.968912, 0.247403],
+        target: [-0.262075, 0.76138, 1.27392],
+        camera: [ -1.1807959999999995, 1.8300000000000007, 3.99],
+        defaultCameraMode: 'freefly',
+        size: '326mb'
+    },
     'room': {
         up: [0, 0.886994, 0.461779],
         target: [-0.428322434425354, 1.2004123210906982, 0.8184626698493958],
@@ -42,13 +49,8 @@ const defaultCameraParameters = {
         defaultCameraMode: 'freefly',
         size: '270mb'
     },
-    'building': {
-        up: [0, 0.968912, 0.247403],
-        target: [-0.262075, 0.76138, 1.27392],
-        camera: [ -1.1807959999999995, 1.8300000000000007, 3.99],
-        defaultCameraMode: 'orbit',
-        size: '326mb'
-    },
+ 
+   
     'garden': {
         up: [0.055540, 0.928368, 0.367486],
         target: [0.338164, 1.198655, 0.455374],
