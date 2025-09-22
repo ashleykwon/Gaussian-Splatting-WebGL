@@ -34,6 +34,7 @@ function initGUI() {
     gui.add(settings, 'scalingModifier', 0.01, 1, 0.01).name('Scaling Modifier')
         .onChange(() => requestRender())
 
+
     // File upload handler
     gui.add(settings, 'uploadFile').name('Upload .ply file')
     document.querySelector('#input').addEventListener('change', async e => {
@@ -65,6 +66,14 @@ function initGUI() {
        .onChange(value => {
         cam.fov_y = value * Math.PI / 180
         requestRender()
+    })
+    
+    
+    const projTypes =  ['perspective', 'orthographic']
+    otherFolder.add(settings, 'projType', projTypes).name('Projection Type')
+       .onChange(value => {
+        cam.projType = value
+        requestRender() // is in main.js
     })
 
     otherFolder.add(settings, 'debugDepth').name('Show Depth Map')

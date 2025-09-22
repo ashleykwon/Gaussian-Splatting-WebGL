@@ -108,26 +108,26 @@ async function loadPly(content, localAndGlobal_CameraMatrices=null) {
         cov3Ds.push(...cov3D)
         // rotations.push(...rotation)
         // scales.push(...scale)
-        if (localAndGlobal_CameraMatrices){
-            var temp_pos = vec4.fromValues(position[0], position[1], position[2], 1.0);
-            var local_modelViewSpaceCoord = vec4.create()
-            vec4.transformMat4(local_modelViewSpaceCoord, temp_pos, localAndGlobal_CameraMatrices.localViewModelMatrix)
+        // if (localAndGlobal_CameraMatrices){
+        //     var temp_pos = vec4.fromValues(position[0], position[1], position[2], 1.0);
+        //     var local_modelViewSpaceCoord = vec4.create()
+        //     vec4.transformMat4(local_modelViewSpaceCoord, temp_pos, localAndGlobal_CameraMatrices.localViewModelMatrix)
 
-            var local_projectionSpaceCoord = vec4.create()
-            vec4.transformMat4(local_projectionSpaceCoord, local_modelViewSpaceCoord, localAndGlobal_CameraMatrices.localProjectionMatrix);
+        //     var local_projectionSpaceCoord = vec4.create()
+        //     vec4.transformMat4(local_projectionSpaceCoord, local_modelViewSpaceCoord, localAndGlobal_CameraMatrices.localProjectionMatrix);
 
-            var inversed_globalProjectionMatrix = mat4.create()
-            mat4.invert(inversed_globalProjectionMatrix, localAndGlobal_CameraMatrices.globalProjectionMatrix);
-            var global_viewModelSpaceCoord = vec4.create()
-            vec4.transformMat4(global_viewModelSpaceCoord, local_projectionSpaceCoord, inversed_globalProjectionMatrix)
+        //     var inversed_globalProjectionMatrix = mat4.create()
+        //     mat4.invert(inversed_globalProjectionMatrix, localAndGlobal_CameraMatrices.globalProjectionMatrix);
+        //     var global_viewModelSpaceCoord = vec4.create()
+        //     vec4.transformMat4(global_viewModelSpaceCoord, local_projectionSpaceCoord, inversed_globalProjectionMatrix)
 
-            var inversed_globalViewModelMatrix = mat4.create()
-            mat4.invert(inversed_globalViewModelMatrix, localAndGlobal_CameraMatrices.globalViewModelMatrix)
-            var global_worldSpaceCoord = vec4.create()
-            vec4.transformMat4(global_worldSpaceCoord, global_viewModelSpaceCoord, inversed_globalViewModelMatrix)
+        //     var inversed_globalViewModelMatrix = mat4.create()
+        //     mat4.invert(inversed_globalViewModelMatrix, localAndGlobal_CameraMatrices.globalViewModelMatrix)
+        //     var global_worldSpaceCoord = vec4.create()
+        //     vec4.transformMat4(global_worldSpaceCoord, global_viewModelSpaceCoord, inversed_globalViewModelMatrix)
 
-            position = vec3.fromValues(global_worldSpaceCoord[0], global_worldSpaceCoord[1], global_worldSpaceCoord[2])
-        }
+        //     position = vec3.fromValues(global_worldSpaceCoord[0], global_worldSpaceCoord[1], global_worldSpaceCoord[2])
+        // }
         positions.push(...position)
     }
 

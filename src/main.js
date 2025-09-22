@@ -25,6 +25,7 @@ const settings = {
     debugDepth: false,
     freeFly: false,
     sortTime: 'NaN',
+    projType: 'perspective',
     uploadFile: () => document.querySelector('#input').click(),
 
     // Camera calibration
@@ -157,35 +158,36 @@ async function loadScene({scene, file}) {
     cam.update() // This is where the camera matrix updates happen
 
     ///////////////// Added by me ///////////////////////////////////////////////
+    ////// Render again with orthographic matrix
     // Apply orthographic perspective to each data poisition
-    const fov_radian =  settings.fov * Math.PI / 180
-    const aspect = gl.canvas.width / gl.canvas.height
-    // const distance_to_image_plane = 1/(Math.tan(fov_radian / 2))
-    const distance_to_image_plane = 50
-    const ortho_top = distance_to_image_plane * Math.tan(fov_radian / 2)
-    const ortho_bottom = -1*ortho_top
-    const ortho_right = ortho_top * aspect
-    const ortho_left = -1*ortho_right
-    const orthoMatrix = mat4.create()
-    mat4.ortho(orthoMatrix, ortho_left, ortho_right, ortho_bottom, ortho_top, 0.1, 100)
+    // const fov_radian =  settings.fov * Math.PI / 180
+    // const aspect = gl.canvas.width / gl.canvas.height
+    // // const distance_to_image_plane = 1/(Math.tan(fov_radian / 2))
+    // const distance_to_image_plane = 50
+    // const ortho_top = distance_to_image_plane * Math.tan(fov_radian / 2)
+    // const ortho_bottom = -1*ortho_top
+    // const ortho_right = ortho_top * aspect
+    // const ortho_left = -1*ortho_right
+    // const orthoMatrix = mat4.create()
+    // mat4.ortho(orthoMatrix, ortho_left, ortho_right, ortho_bottom, ortho_top, 0.1, 100)
 
-    var localAndGlobal_CameraMatrices = {}
-    localAndGlobal_CameraMatrices.localProjectionMatrix = orthoMatrix
-    localAndGlobal_CameraMatrices.localViewModelMatrix = cam.vm
-    localAndGlobal_CameraMatrices.globalProjectionMatrix = cam.projMatrix
-    localAndGlobal_CameraMatrices.globalViewModelMatrix = cam.vm
+    // var localAndGlobal_CameraMatrices = {}
+    // localAndGlobal_CameraMatrices.localProjectionMatrix = orthoMatrix
+    // localAndGlobal_CameraMatrices.localViewModelMatrix = cam.vm
+    // localAndGlobal_CameraMatrices.globalProjectionMatrix = cam.projMatrix
+    // localAndGlobal_CameraMatrices.globalViewModelMatrix = cam.vm
 
-    // Load data again with orthographic projection 
-    data = await loadPly(content.buffer, localAndGlobal_CameraMatrices) // contains positions
-    // Send gaussian data to the worker
-    worker.postMessage({ gaussians: {
-        ...data, count: gaussianCount,
-    } })
+    // // Load data again with orthographic projection 
+    // data = await loadPly(content.buffer, localAndGlobal_CameraMatrices) // contains positions
+    // // Send gaussian data to the worker
+    // worker.postMessage({ gaussians: {
+    //     ...data, count: gaussianCount,
+    // } })
 
-    cameraParameters = scene ? defaultCameraParameters[scene] : {}
-    if (cam == null) cam = new Camera(cameraParameters)
-    else cam.setParameters(cameraParameters)
-    cam.update()
+    // cameraParameters = scene ? defaultCameraParameters[scene] : {}
+    // if (cam == null) cam = new Camera(cameraParameters)
+    // else cam.setParameters(cameraParameters)
+    // cam.update()
     /////////////////////////////////////////////////////////////////////////////////////////
     
     // Update GUI

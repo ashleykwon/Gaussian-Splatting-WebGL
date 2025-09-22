@@ -67,7 +67,7 @@ onmessage = function(event) {
 function sortGaussiansByDepth(depthIndex, gaussians, viewMatrix, sortingAlgorithm) {
     const calcDepth = (i) => gaussians.positions[i*3] * viewMatrix[2] +
                              gaussians.positions[i*3+1] * viewMatrix[6] +
-                             gaussians.positions[i*3+2] * viewMatrix[10]
+                             gaussians.positions[i*3+2] * viewMatrix[10] 
 
     // Default javascript sort [~0.9s]
     if (sortingAlgorithm == 'Array.sort') {

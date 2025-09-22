@@ -56,6 +56,8 @@ class Camera {
         this.vm = mat4.create()
         this.vpm = mat4.create()
 
+        this.projType = 'perspective'
+
         // Rotate camera around target (mouse)
         gl.canvas.addEventListener('mousemove', e => {
             if (!e.buttons || this.disableMovement) return
@@ -181,18 +183,22 @@ class Camera {
         // Create a lookAt view matrix
         mat4.lookAt(this.viewMatrix, this.pos, this.target, this.up)
 
-        // Create a perspective projection matrix
+        // Create a perspective or orthographic projection matrix
         const aspect = gl.canvas.width / gl.canvas.height
-        mat4.perspective(this.projMatrix, this.fov_y, aspect, 0.1, 100) // output matrix, fovY, aspect ratio, near plane, far plane
-
-        // const fov_radian =  this.fov_y * Math.PI / 180
-        // const distance_to_image_plane = 1/(Math.tan(fov_radian / 2))
-        // const distance_to_image_plane = 50
-        // const ortho_top = distance_to_image_plane * Math.tan(fov_radian / 2)
-        // const ortho_bottom = -1*ortho_top
-        // const ortho_right = ortho_top * aspect
-        // const ortho_left = -1*ortho_right
-        // mat4.ortho(this.projMatrix, ortho_left, ortho_right, ortho_bottom, ortho_top, 0.1, 100)
+        if (this.projType == 'perspective'){
+            mat4.perspective(this.projMatrix, this.fov_y, aspect, 0.1, 100) // output matrix, fovY, aspect ratio, near plane, far plane
+        }
+        else{
+            const fov_radian =  this.fov_y * Math.PI / 180
+            // const distance_to_image_plane = gl.canvas.height/(Math.tan(fov_radian / 2)) // aka focal length?
+            // console.log(distance_to_image_plane)
+            const distance_to_image_plane = 50 // Not sure how to set this??
+            const ortho_top = distance_to_image_plane * Math.tan(fov_radian / 2)
+            const ortho_bottom = -1*ortho_top
+            const ortho_right = ortho_top * aspect
+            const ortho_left = -1*ortho_right
+            mat4.ortho(this.projMatrix, ortho_left, ortho_right, ortho_bottom, ortho_top, 0.1, 100)
+        }
 
 		// Convert view and projection to target coordinate system
         // Original C++ reference: https://gitlab.inria.fr/sibr/sibr_core/-/blob/gaussian_code_release_union/src/projects/gaussianviewer/renderer/GaussianView.cpp#L464
@@ -216,7 +222,8 @@ class Camera {
         const dot = this.lastViewProjMatrix[2]  * this.vpm[2] 
                   + this.lastViewProjMatrix[6]  * this.vpm[6]
                   + this.lastViewProjMatrix[10] * this.vpm[10]
-        if (Math.abs(dot - 1) > 0.01) {
+        if (Math.abs(dot - 1) > 0.01 && (dot > 0.01)) {
+            console.log(dot)
             this.needsWorkerUpdate = true
             mat4.copy(this.lastViewProjMatrix, this.vpm)
         }
@@ -226,7 +233,7 @@ class Camera {
             this.needsWorkerUpdate = false
             isWorkerSorting = true
             worker.postMessage({
-                viewMatrix:  this.vpm, 
+                viewMatrix:  this.vpm, // This includes projection matrix?? 
                 maxGaussians: settings.maxGaussians,
                 sortingAlgorithm: settings.sortingAlgorithm
             })
