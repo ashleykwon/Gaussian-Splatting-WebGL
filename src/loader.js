@@ -1,6 +1,6 @@
 // Load all gaussian data from a point-cloud file
 // Original C++ implementation: https://gitlab.inria.fr/sibr/sibr_core/-/blob/gaussian_code_release_union/src/projects/gaussianviewer/renderer/GaussianView.cpp#L70
-async function loadPly(content) {
+async function loadPly(content, localAndGlobal_CameraMatrices=null) {
     // Read header
     const start = performance.now()
     const contentStart = new TextDecoder('utf-8').decode(content.slice(0, 2000))
@@ -46,21 +46,21 @@ async function loadPly(content) {
 
     // Extract all properties for a gaussian splat using the dataview
     const extractSplatData = (splatID) => {
-        const position = fromDataView(splatID, 0, 3)
+        var position = fromDataView(splatID, 0, 3)
         // const n = fromDataView(splatID, 3, 6) // Not used
-        const harmonic = fromDataView(splatID, 6, 9)
+        var harmonic = fromDataView(splatID, 6, 9)
         
-        const H_END = 6 + 48 // Offset of the last harmonic coefficient
-        const opacity = fromDataView(splatID, H_END)
-        const scale = fromDataView(splatID, H_END + 1, H_END + 4)
-        const rotation = fromDataView(splatID, H_END + 4, H_END + 8)
+        var H_END = 6 + 48 // Offset of the last harmonic coefficient
+        var opacity = fromDataView(splatID, H_END)
+        var scale = fromDataView(splatID, H_END + 1, H_END + 4)
+        var rotation = fromDataView(splatID, H_END + 4, H_END + 8)
     
         return { position, harmonic, opacity, scale, rotation }
     }
 
     for (let i = 0; i < gaussianCount; i++) {
         // Extract data for current gaussian
-        let { position, harmonic, opacity, scale, rotation } = extractSplatData(i)
+        var { position, harmonic, opacity, scale, rotation } = extractSplatData(i)
         
         // Update scene bounding box
         sceneMin = sceneMin.map((v, j) => Math.min(v, position[j]))
@@ -108,7 +108,26 @@ async function loadPly(content) {
         cov3Ds.push(...cov3D)
         // rotations.push(...rotation)
         // scales.push(...scale)
+        if (localAndGlobal_CameraMatrices){
+            var temp_pos = vec4.fromValues(position[0], position[1], position[2], 1.0);
+            var local_modelViewSpaceCoord = vec4.create()
+            vec4.transformMat4(local_modelViewSpaceCoord, temp_pos, localAndGlobal_CameraMatrices.localViewModelMatrix)
 
+            var local_projectionSpaceCoord = vec4.create()
+            vec4.transformMat4(local_projectionSpaceCoord, local_modelViewSpaceCoord, localAndGlobal_CameraMatrices.localProjectionMatrix);
+
+            var inversed_globalProjectionMatrix = mat4.create()
+            mat4.invert(inversed_globalProjectionMatrix, localAndGlobal_CameraMatrices.globalProjectionMatrix);
+            var global_viewModelSpaceCoord = vec4.create()
+            vec4.transformMat4(global_viewModelSpaceCoord, local_projectionSpaceCoord, inversed_globalProjectionMatrix)
+
+            var inversed_globalViewModelMatrix = mat4.create()
+            mat4.invert(inversed_globalViewModelMatrix, localAndGlobal_CameraMatrices.globalViewModelMatrix)
+            var global_worldSpaceCoord = vec4.create()
+            vec4.transformMat4(global_worldSpaceCoord, global_viewModelSpaceCoord, inversed_globalViewModelMatrix)
+
+            position = vec3.fromValues(global_worldSpaceCoord[0], global_worldSpaceCoord[1], global_worldSpaceCoord[2])
+        }
         positions.push(...position)
     }
 

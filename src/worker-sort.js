@@ -5,11 +5,12 @@ let depthIndex
 onmessage = function(event) {
     // Init web worker event
     if (event.data.gaussians) {
+
+      
         gaussians = event.data.gaussians
         gaussians.totalCount = gaussians.count
 
         depthIndex = new Uint32Array(gaussians.count)
-
         console.log(`[Worker] Received ${gaussians.count} gaussians`)
 
         data.positions = new Float32Array(gaussians.count * 3)

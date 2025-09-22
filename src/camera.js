@@ -183,7 +183,16 @@ class Camera {
 
         // Create a perspective projection matrix
         const aspect = gl.canvas.width / gl.canvas.height
-        mat4.perspective(this.projMatrix, this.fov_y, aspect, 0.1, 100)
+        mat4.perspective(this.projMatrix, this.fov_y, aspect, 0.1, 100) // output matrix, fovY, aspect ratio, near plane, far plane
+
+        // const fov_radian =  this.fov_y * Math.PI / 180
+        // const distance_to_image_plane = 1/(Math.tan(fov_radian / 2))
+        // const distance_to_image_plane = 50
+        // const ortho_top = distance_to_image_plane * Math.tan(fov_radian / 2)
+        // const ortho_bottom = -1*ortho_top
+        // const ortho_right = ortho_top * aspect
+        // const ortho_left = -1*ortho_right
+        // mat4.ortho(this.projMatrix, ortho_left, ortho_right, ortho_bottom, ortho_top, 0.1, 100)
 
 		// Convert view and projection to target coordinate system
         // Original C++ reference: https://gitlab.inria.fr/sibr/sibr_core/-/blob/gaussian_code_release_union/src/projects/gaussianviewer/renderer/GaussianView.cpp#L464
